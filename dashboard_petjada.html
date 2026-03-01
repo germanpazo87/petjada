@@ -584,7 +584,35 @@
 // ══════════════════════════════════════════════════════════════════════════════
 
 const SHEETS_CSV_RAW = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTV1-0MALvHb_77ghThzLeLrCtXhek1Al05HOp13rNSgmY_Bb02tiWG50KeityvUQ/pub?gid=989066220&single=true&output=csv';
-const SHEETS_CSV = 'https://api.allorigins.win/get?url=' + encodeURIComponent(SHEETS_CSV_RAW);
+
+// Tres proxies CORS en cascada — si un falla, prova el següent
+const PROXIES = [
+  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+];
+
+const fetchCSV = async () => {
+  for (let i = 0; i < PROXIES.length; i++) {
+    try {
+      const url = PROXIES[i](SHEETS_CSV_RAW);
+      const resp = await fetch(url, { signal: AbortSignal.timeout(9000) });
+      if (!resp.ok) { console.warn(`Proxy ${i} HTTP ${resp.status}`); continue; }
+      const raw = await resp.text();
+      // allorigins embolicat en JSON: { contents: "csv..." }
+      if (raw.trim().startsWith('{')) {
+        try {
+          const obj = JSON.parse(raw);
+          if (obj.contents && obj.contents.includes(',')) return obj.contents;
+        } catch(_) {}
+      }
+      // Resposta CSV directa (corsproxy, codetabs)
+      if (raw.includes(',')) return raw;
+      console.warn(`Proxy ${i} resposta no vàlida`);
+    } catch(e) { console.warn(`Proxy ${i} error:`, e.message); }
+  }
+  throw new Error('Tots els proxies han fallat. Comprova la connexió i que el Sheets és públic.');
+};
 const T_REF = 18.8;
 
 // ── Índexos de columna del CSV (0-based, fila 4 = capçaleres) ──
@@ -926,11 +954,7 @@ const showError = msg => {
 const loadAndRender = async () => {
   showLoading();
   try {
-    const resp = await fetch(SHEETS_CSV);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const json = await resp.json();
-    if (!json.contents) throw new Error('El proxy no ha retornat dades');
-    const text = json.contents;
+    const text = await fetchCSV();
 
     // Parsejar CSV manualment (sense dependència externa)
     const lines = text.trim().split('\n');
