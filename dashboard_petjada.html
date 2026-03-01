@@ -439,12 +439,12 @@
     <div class="header-left">
       <div class="badge"><span class="badge-dot"></span> Informe actiu</div>
       <h1>Observatori<br>de la <em>Petjada</em></h1>
-      <p class="subtitle">Institut · Programa de Sostenibilitat Escolar · Barcelona</p>
+      <p class="subtitle">CFA Francesc Layret · Comissió Verda · Orservatori de la petjada</p>
     </div>
     <div class="header-right">
       <div class="month-label" id="mes-label">Febrer 2026</div>
       <div class="year-label">Curs 2025–26</div>
-      <div class="weeks-label">Setmanes S06 · S07 · S08 · S09</div>
+      <div class="weeks-label" id="weeks-label">carregant...</div>
     </div>
   </header>
 
@@ -454,23 +454,23 @@
       <span class="kpi-icon">⚡</span>
       <div class="kpi-label">Consum elèctric del mes</div>
       <div>
-        <span class="kpi-value">3.979</span>
+        <span class="kpi-value" id="kpi-elec">—</span>
         <span class="kpi-unit">kWh</span>
       </div>
-      <div class="kpi-delta warn">▲ +2,1% vs gener</div>
-      <div class="kpi-subtext">18 dies lectius · 4 setmanes</div>
+      <div class="kpi-delta" id="kpi-elec-delta">—</div>
+      <div class="kpi-subtext" id="kpi-elec-sub">carregant...</div>
     </div>
 
     <div class="kpi index fade-up">
       <span class="kpi-icon">📊</span>
       <div class="kpi-label">Índex d'eficiència</div>
       <div>
-        <span class="kpi-value">65,3</span>
+        <span class="kpi-value" id="kpi-idx">—</span>
         <span class="kpi-unit">kWh/K·dia</span>
       </div>
-      <div class="kpi-delta good">▼ −8,4% vs gener</div>
+      <div class="kpi-delta" id="kpi-idx-delta">—</div>
       <div style="margin-top:8px;">
-        <span class="regime-tag regime-winter">❄️ Règim hivern</span>
+        <span class="regime-tag" id="kpi-regime">carregant...</span>
       </div>
     </div>
 
@@ -478,11 +478,11 @@
       <span class="kpi-icon">🍶</span>
       <div class="kpi-label">Ampolles evitades</div>
       <div>
-        <span class="kpi-value">—</span>
+        <span class="kpi-value" id="kpi-bottles">—</span>
         <span class="kpi-unit">u/mes</span>
       </div>
-      <div class="kpi-delta info">⏳ Font instal·lada S10</div>
-      <div class="kpi-subtext">Disponible a partir de març 2026</div>
+      <div class="kpi-delta" id="kpi-bottles-delta">—</div>
+      <div class="kpi-subtext" id="kpi-bottles-sub">carregant...</div>
     </div>
   </div>
 
@@ -504,30 +504,30 @@
       <div class="section-title" style="font-size:0.95rem; margin-bottom:16px;">Context climàtic del mes</div>
       <div class="context-row">
         <span class="context-key">T mitjana</span>
-        <span class="context-val">13,3 °C</span>
+        <span class="context-val" id="ctx-tmitjana">—</span>
       </div>
       <div class="context-row">
         <span class="context-key">T efectiva (amb sol)</span>
-        <span class="context-val">14,5 °C</span>
+        <span class="context-val" id="ctx-tef">—</span>
       </div>
       <div class="context-row">
         <span class="context-key">Radiació solar</span>
-        <span class="context-val">80,2 MJ/m²</span>
+        <span class="context-val" id="ctx-rad">—</span>
       </div>
       <div class="context-row">
         <span class="context-key">T bonus solar</span>
-        <span class="context-val">+1,15 °C</span>
+        <span class="context-val" id="ctx-tbonus">—</span>
       </div>
       <div class="context-row">
         <span class="context-key">Graus-dia calef.</span>
-        <span class="context-val">4,3 K·dia</span>
+        <span class="context-val" id="ctx-gd">—</span>
       </div>
       <div class="progress-wrap" style="margin-top:16px;">
         <div class="progress-label">
           <span>Fredesc</span><span>Temperat</span>
         </div>
         <div class="progress-bar">
-          <div class="progress-fill fill-energy" style="width: 62%"></div>
+          <div class="progress-fill fill-energy" id="ctx-progress" style="width: 0%"></div>
         </div>
       </div>
       <div class="method-note">
@@ -546,16 +546,16 @@
       </div>
       <div class="bottles-card">
         <div class="bottles-title">🍶 Ampolles evitades acumulades</div>
-        <div class="bottles-big">—</div>
-        <div style="font-size:13px; opacity:0.8;">Font instal·lada: 2 mar 2026</div>
+        <div class="bottles-big" id="bottles-total">—</div>
+        <div style="font-size:13px; opacity:0.8;" id="bottles-status">carregant...</div>
         <div class="bottles-breakdown">
-          Ampolles de font pública (0,5 L): <strong>—</strong><br>
-          Garrafes Aquaservice × 36: <strong>—</strong><br>
-          <em>Dades disponibles a partir de S10</em>
+          Ampolles de font pública (0,5 L): <strong id="bottles-font">—</strong><br>
+          Garrafes Aquaservice × 36: <strong id="bottles-aqua">—</strong><br>
+          <span id="bottles-note"></span>
         </div>
         <div class="bottles-co2">
           CO₂ evitat estimat:<br>
-          <strong>— kg</strong>
+          <strong id="bottles-co2">— kg</strong>
           <span style="font-size:11px; opacity:0.7; margin-left:6px;">× 0,17 kg CO₂/ampolla</span>
         </div>
       </div>
@@ -578,218 +578,411 @@
 </div>
 
 <script>
-// ── DATA (substituir amb dades reals cada mes) ──────────────────────────────
-const DATA = {
-  mes: "Febrer 2026",
-  setmanes: ["S06", "S07", "S08", "S09"],
-  consum_lectiu: [261.2, 235.75, 218.25, 171.4],   // kWh/dia lectiu
-  index_ef:      [49.90, 71.56, 65.09, 37.53],      // kWh/K·dia
-  t_efectiva:    [13.57, 15.51, 15.45, 14.23],       // °C
-  agua_m3:       [6, 5, null, 6],                    // null = reinici comptador
+// ══════════════════════════════════════════════════════════════════════════════
+// OBSERVATORI DE LA PETJADA — Dashboard connectat a Google Sheets
+// URL del CSV: actualitzar si canvia el Sheets
+// ══════════════════════════════════════════════════════════════════════════════
 
-  // Comparativa mensual: [gen, feb, mar, abr, mai, jun]
-  comp_2025: [268, 241, 198, 154, 132, 118],
-  comp_2026: [247, 221, null, null, null, null],
-  mesos:     ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun"],
-};
+const SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReqrjc4UJK_kIfUTyDjZYhgN2gEylzPEsdPncLJQlHiZkJFWXXskBQE4SwR022Sg/pub?gid=989066220&single=true&output=csv';
+const T_REF = 18.8;
 
-// ── COLOR PALETTE ──────────────────────────────────────────────────────────
+// ── Índexos de columna del CSV (0-based, fila 4 = capçaleres) ──
+// A=0 Setmana, B=1 kWh, C=2 m3, G=6 ConsumLectiu, H=7 Index,
+// T=19 Tmitjana, V=21 Radiacio, W=22 Tbonus, X=23 Tefectiva
+// AC=28 AmpollesTotal, AD=29 CO2evitat
+const COL = { set:0, kwh:1, m3:2, lectiu:6, idx:7,
+              tmit:19, rad:21, tbon:22, tef:23, ampolles:28, co2ev:29 };
+
+const MESOS_CA = ['Gen','Feb','Mar','Abr','Mai','Jun','Jul','Ago','Set','Oct','Nov','Des'];
+const MESOS_FULL = ['Gener','Febrer','Març','Abril','Maig','Juny',
+                    'Juliol','Agost','Setembre','Octubre','Novembre','Desembre'];
+
+// ── Color palette ──
 const C = {
-  forest:  '#1a3a2a',
-  fern:    '#4a8c5c',
-  sage:    '#7ab893',
-  mist:    '#b8d8c4',
-  foam:    '#e8f4ed',
-  ocean:   '#1e4a6b',
-  tide:    '#2e6e9e',
-  sky:     '#5b9fc2',
-  palesky: '#c5e0ef',
-  gold:    '#c8a45a',
-  warmgold:'#e8c878',
+  forest: '#1a3a2a', fern: '#4a8c5c', sage: '#7ab893',
+  mist: '#b8d8c4', ocean: '#1e4a6b', tide: '#2e6e9e',
+  sky: '#5b9fc2', gold: '#c8a45a',
 };
 
 Chart.defaults.font.family = "'DM Sans', sans-serif";
 Chart.defaults.color = '#8a9a8e';
 
-// ── CHART 1: Evolució setmanal consum elèctric + índex ─────────────────────
-new Chart(document.getElementById('chartElec'), {
-  type: 'bar',
-  data: {
-    labels: DATA.setmanes,
-    datasets: [
-      {
-        label: 'Consum lectiu [kWh/dia]',
-        data: DATA.consum_lectiu,
-        backgroundColor: DATA.consum_lectiu.map(v => `rgba(74,140,92,${0.5 + (v/400)*0.4})`),
-        borderColor: C.fern,
-        borderWidth: 1.5,
-        borderRadius: 6,
-        yAxisID: 'y',
-        order: 2,
-      },
-      {
-        label: 'Índex eficiència [kWh/K·dia]',
-        data: DATA.index_ef,
-        type: 'line',
-        borderColor: C.gold,
-        backgroundColor: 'rgba(200,164,90,0.08)',
-        borderWidth: 2.5,
-        pointBackgroundColor: C.gold,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        tension: 0.3,
-        fill: true,
-        yAxisID: 'y2',
-        order: 1,
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: { boxWidth: 14, padding: 20, font: { size: 12 } }
-      },
-      tooltip: {
-        backgroundColor: C.forest,
-        titleColor: '#fff',
-        bodyColor: 'rgba(255,255,255,0.8)',
-        padding: 12,
-        cornerRadius: 8,
-        callbacks: {
-          label: ctx => {
-            if (ctx.datasetIndex === 0) return ` ${ctx.parsed.y.toFixed(1)} kWh/dia`;
-            return ` Índex: ${ctx.parsed.y.toFixed(2)} kWh/K·dia`;
+// ── Chart instances (guardades per poder destruir-les i recrear) ──
+let chartElec, chartComp, chartWater;
+
+// ── Helpers ──
+const parseNum = v => {
+  if (v === null || v === undefined || v === '' || v === '—') return null;
+  const s = String(v).replace(/\./g,'').replace(',','.');
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+};
+
+const fmt = (n, dec=1) => n === null ? '—' :
+  n.toLocaleString('ca-ES', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+
+const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+
+// ── Detectar mes actual (última setmana amb dades) ──
+const detectMonth = rows => {
+  // Última fila amb dades de consum lectiu
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const v = parseNum(rows[i][COL.lectiu]);
+    if (v !== null) {
+      const set = rows[i][COL.set]; // "2026-S09"
+      const year = parseInt(set.split('-')[0]);
+      const week = parseInt(set.split('S')[1]);
+      // Aproximar mes a partir del número de setmana
+      const date = new Date(year, 0, 1 + (week - 1) * 7);
+      return { month: date.getMonth(), year, row: i };
+    }
+  }
+  return null;
+};
+
+// ── Filtrar setmanes del mes detectat ──
+const rowsOfMonth = (rows, month, year) => {
+  return rows.filter(r => {
+    const set = r[COL.set];
+    if (!set || !set.includes('-S')) return false;
+    const w = parseInt(set.split('S')[1]);
+    const y = parseInt(set.split('-')[0]);
+    const date = new Date(y, 0, 1 + (w - 1) * 7);
+    return date.getMonth() === month && date.getFullYear() === year
+      && parseNum(r[COL.lectiu]) !== null;
+  });
+};
+
+// ── Filtrar setmanes del mes anterior ──
+const rowsOfPrevMonth = (rows, month, year) => {
+  let pm = month - 1, py = year;
+  if (pm < 0) { pm = 11; py--; }
+  return rowsOfMonth(rows, pm, py);
+};
+
+// ── Agrupar per mes per al gràfic comparatiu ──
+const monthlyAvg = (rows, year) => {
+  const result = Array(12).fill(null);
+  for (let m = 0; m < 12; m++) {
+    const mRows = rowsOfMonth(rows, m, year);
+    const vals = mRows.map(r => parseNum(r[COL.lectiu])).filter(v => v !== null);
+    if (vals.length > 0) result[m] = vals.reduce((a,b) => a+b, 0) / vals.length;
+  }
+  return result;
+};
+
+// ── Render KPIs ──
+const renderKPIs = (monthRows, prevRows, month, year) => {
+  // Consum elèctric total del mes
+  const totalKwh = monthRows.reduce((s, r) => s + (parseNum(r[COL.kwh]) || 0), 0);
+  const prevKwh  = prevRows.reduce((s, r) => s + (parseNum(r[COL.kwh]) || 0), 0);
+  setEl('kpi-elec', fmt(totalKwh, 0));
+
+  if (prevKwh > 0) {
+    const delta = ((totalKwh - prevKwh) / prevKwh) * 100;
+    const el = document.getElementById('kpi-elec-delta');
+    if (el) {
+      el.textContent = (delta >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(delta), 1) + '% vs mes anterior';
+      el.className = 'kpi-delta ' + (delta <= 0 ? 'good' : 'warn');
+    }
+  }
+
+  const totalDies = monthRows.reduce((s, r) => {
+    const lect = parseNum(r[COL.lectiu]);
+    const kwh  = parseNum(r[COL.kwh]);
+    return lect && kwh ? s + Math.round(kwh / lect) : s;
+  }, 0);
+  setEl('kpi-elec-sub', `${totalDies} dies lectius · ${monthRows.length} setmanes`);
+
+  // Índex d'eficiència (mitjana del mes)
+  const idxVals = monthRows.map(r => parseNum(r[COL.idx])).filter(v => v !== null);
+  const idxMit  = idxVals.length ? idxVals.reduce((a,b)=>a+b,0)/idxVals.length : null;
+  const prevIdx = prevRows.map(r => parseNum(r[COL.idx])).filter(v=>v!==null);
+  const prevIdxMit = prevIdx.length ? prevIdx.reduce((a,b)=>a+b,0)/prevIdx.length : null;
+  setEl('kpi-idx', idxMit !== null ? fmt(idxMit, 1) : '—');
+
+  if (idxMit !== null && prevIdxMit !== null) {
+    const delta = ((idxMit - prevIdxMit) / prevIdxMit) * 100;
+    const el = document.getElementById('kpi-idx-delta');
+    if (el) {
+      el.textContent = (delta >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(delta), 1) + '% vs mes anterior';
+      el.className = 'kpi-delta ' + (delta <= 0 ? 'good' : 'warn');
+    }
+  }
+
+  // Règim hivern/estiu
+  const tefs = monthRows.map(r => parseNum(r[COL.tef])).filter(v=>v!==null);
+  const tMit = tefs.length ? tefs.reduce((a,b)=>a+b,0)/tefs.length : null;
+  const regEl = document.getElementById('kpi-regime');
+  if (regEl && tMit !== null) {
+    if (tMit < T_REF - 2)      { regEl.textContent = '❄️ Règim hivern'; regEl.className = 'regime-tag regime-winter'; }
+    else if (tMit > T_REF + 2) { regEl.textContent = '☀️ Règim estiu';  regEl.className = 'regime-tag regime-summer'; }
+    else                        { regEl.textContent = '🌤️ Transició';    regEl.className = 'regime-tag regime-trans'; }
+  }
+
+  // Ampolles
+  const totAmpolles = monthRows.reduce((s,r) => s + (parseNum(r[COL.ampolles]) || 0), 0);
+  const totCo2ev    = monthRows.reduce((s,r) => s + (parseNum(r[COL.co2ev])   || 0), 0);
+  if (totAmpolles > 0) {
+    setEl('kpi-bottles', Math.round(totAmpolles).toLocaleString('ca-ES'));
+    const elD = document.getElementById('kpi-bottles-delta');
+    if (elD) { elD.textContent = fmt(totCo2ev, 1) + ' kg CO₂ evitat'; elD.className = 'kpi-delta info'; }
+    setEl('kpi-bottles-sub', 'font pública + Aquaservice');
+  } else {
+    setEl('kpi-bottles', '—');
+    const elD = document.getElementById('kpi-bottles-delta');
+    if (elD) { elD.textContent = '⏳ Font activa des del 2 mar'; elD.className = 'kpi-delta info'; }
+    setEl('kpi-bottles-sub', 'Dades disponibles a partir de S10');
+  }
+};
+
+// ── Render context climàtic ──
+const renderClimate = monthRows => {
+  const avg = col => {
+    const vals = monthRows.map(r => parseNum(r[col])).filter(v=>v!==null);
+    return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+  };
+  const tmit = avg(COL.tmit);
+  const tef  = avg(COL.tef);
+  const rad  = avg(COL.rad);
+  const tbon = avg(COL.tbon);
+  const gd   = tef !== null ? Math.max(0, T_REF - tef) : null;
+
+  setEl('ctx-tmitjana', tmit !== null ? fmt(tmit,1) + ' °C' : '—');
+  setEl('ctx-tef',      tef  !== null ? fmt(tef,1)  + ' °C' : '—');
+  setEl('ctx-rad',      rad  !== null ? fmt(rad,1)  + ' MJ/m²' : '—');
+  setEl('ctx-tbonus',   tbon !== null ? '+' + fmt(tbon,2) + ' °C' : '—');
+  setEl('ctx-gd',       gd   !== null ? fmt(gd,1)   + ' K·dia' : '—');
+
+  // Barra progrés: quant de fred fa (0=18.8°C, 100%=0°C)
+  if (tef !== null) {
+    const pct = Math.min(100, Math.max(0, ((T_REF - tef) / T_REF) * 100));
+    const bar = document.getElementById('ctx-progress');
+    if (bar) bar.style.width = pct + '%';
+  }
+};
+
+// ── Render Bottles card ──
+const renderBottles = monthRows => {
+  const totAmp  = monthRows.reduce((s,r) => s + (parseNum(r[COL.ampolles]) || 0), 0);
+  const totCo2  = monthRows.reduce((s,r) => s + (parseNum(r[COL.co2ev])   || 0), 0);
+
+  if (totAmp > 0) {
+    setEl('bottles-total', Math.round(totAmp).toLocaleString('ca-ES'));
+    setEl('bottles-status', 'ampolles de 0,5 L evitades aquest mes');
+    setEl('bottles-co2', fmt(totCo2,1) + ' kg');
+    setEl('bottles-note', '');
+  } else {
+    setEl('bottles-total', '—');
+    setEl('bottles-status', 'Font activa des del 2 mar 2026');
+    setEl('bottles-co2', '— kg');
+    setEl('bottles-note', 'Dades disponibles a partir de S10');
+  }
+};
+
+// ── Render Chart 1: Evolució setmanal ──
+const renderChartElec = monthRows => {
+  const labels = monthRows.map(r => r[COL.set]);
+  const consum = monthRows.map(r => parseNum(r[COL.lectiu]));
+  const index  = monthRows.map(r => parseNum(r[COL.idx]));
+
+  if (chartElec) chartElec.destroy();
+  chartElec = new Chart(document.getElementById('chartElec'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Consum lectiu [kWh/dia]',
+          data: consum,
+          backgroundColor: consum.map(v => v ? `rgba(74,140,92,${0.45 + (v/400)*0.45})` : 'transparent'),
+          borderColor: C.fern, borderWidth: 1.5, borderRadius: 6,
+          yAxisID: 'y', order: 2,
+        },
+        {
+          label: 'Índex eficiència [kWh/K·dia]',
+          data: index,
+          type: 'line',
+          borderColor: C.gold, backgroundColor: 'rgba(200,164,90,0.08)',
+          borderWidth: 2.5, pointBackgroundColor: C.gold,
+          pointRadius: 5, pointHoverRadius: 7, tension: 0.3, fill: true,
+          yAxisID: 'y2', order: 1,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 14, padding: 20, font: { size: 12 } } },
+        tooltip: {
+          backgroundColor: C.forest, titleColor: '#fff', bodyColor: 'rgba(255,255,255,0.8)',
+          padding: 12, cornerRadius: 8,
+          callbacks: {
+            label: ctx => ctx.datasetIndex === 0
+              ? ` ${fmt(ctx.parsed.y,1)} kWh/dia`
+              : ` Índex: ${fmt(ctx.parsed.y,2)} kWh/K·dia`
           }
         }
-      }
-    },
-    scales: {
-      x: { grid: { color: 'rgba(184,216,196,0.3)' }, ticks: { font: { size: 12 } } },
-      y: {
-        position: 'left',
-        title: { display: true, text: 'kWh/dia lectiu', font: { size: 11 } },
-        grid: { color: 'rgba(184,216,196,0.3)' },
-        min: 0,
       },
-      y2: {
-        position: 'right',
-        title: { display: true, text: 'Índex [kWh/K·dia]', font: { size: 11 } },
-        grid: { drawOnChartArea: false },
-        min: 0,
+      scales: {
+        x: { grid: { color: 'rgba(184,216,196,0.3)' }, ticks: { font: { size: 12 } } },
+        y: { position: 'left', title: { display: true, text: 'kWh/dia lectiu', font:{size:11} },
+             grid: { color: 'rgba(184,216,196,0.3)' }, min: 0 },
+        y2: { position: 'right', title: { display: true, text: 'Índex [kWh/K·dia]', font:{size:11} },
+              grid: { drawOnChartArea: false }, min: 0 }
       }
     }
-  }
-});
+  });
+};
 
-// ── CHART 2: Comparativa mensual 2025 vs 2026 ──────────────────────────────
-new Chart(document.getElementById('chartComp'), {
-  type: 'bar',
-  data: {
-    labels: DATA.mesos,
-    datasets: [
-      {
-        label: '2025',
-        data: DATA.comp_2025,
-        backgroundColor: 'rgba(184,216,196,0.5)',
-        borderColor: C.sage,
-        borderWidth: 1.5,
-        borderRadius: 4,
-      },
-      {
-        label: '2026',
-        data: DATA.comp_2026,
-        backgroundColor: DATA.comp_2026.map(v => v ? 'rgba(74,140,92,0.75)' : 'transparent'),
-        borderColor: C.fern,
-        borderWidth: 1.5,
-        borderRadius: 4,
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: { boxWidth: 12, padding: 16, font: { size: 11 } }
-      },
-      tooltip: {
-        backgroundColor: C.forest,
-        titleColor: '#fff',
-        bodyColor: 'rgba(255,255,255,0.8)',
-        padding: 10,
-        cornerRadius: 8,
-        callbacks: {
-          label: ctx => ctx.parsed.y ? ` ${ctx.parsed.y} kWh/dia` : ' Sense dades',
+// ── Render Chart 2: Comparativa mensual ──
+const renderChartComp = (rows, year) => {
+  const avg2025 = monthlyAvg(rows, year - 1);
+  const avg2026 = monthlyAvg(rows, year);
+
+  if (chartComp) chartComp.destroy();
+  chartComp = new Chart(document.getElementById('chartComp'), {
+    type: 'bar',
+    data: {
+      labels: MESOS_CA,
+      datasets: [
+        { label: String(year-1), data: avg2025,
+          backgroundColor: 'rgba(184,216,196,0.5)', borderColor: C.sage, borderWidth: 1.5, borderRadius: 4 },
+        { label: String(year),   data: avg2026,
+          backgroundColor: avg2026.map(v => v ? 'rgba(74,140,92,0.75)' : 'transparent'),
+          borderColor: C.fern, borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, padding: 16, font:{size:11} } },
+        tooltip: {
+          backgroundColor: C.forest, titleColor: '#fff', bodyColor: 'rgba(255,255,255,0.8)',
+          padding: 10, cornerRadius: 8,
+          callbacks: { label: ctx => ctx.parsed.y ? ` ${fmt(ctx.parsed.y,1)} kWh/dia` : ' Sense dades' }
         }
-      }
-    },
-    scales: {
-      x: { grid: { color: 'rgba(184,216,196,0.3)' }, ticks: { font: { size: 11 } } },
-      y: {
-        title: { display: true, text: 'kWh/dia lectiu', font: { size: 11 } },
-        grid: { color: 'rgba(184,216,196,0.3)' },
-        min: 0,
+      },
+      scales: {
+        x: { grid: { color: 'rgba(184,216,196,0.3)' }, ticks: { font:{size:11} } },
+        y: { title: { display: true, text: 'kWh/dia lectiu', font:{size:11} },
+             grid: { color: 'rgba(184,216,196,0.3)' }, min: 0 }
       }
     }
-  }
-});
+  });
+};
 
-// ── CHART 3: Consum setmanal d'aigua ──────────────────────────────────────
-new Chart(document.getElementById('chartWater'), {
-  type: 'bar',
-  data: {
-    labels: DATA.setmanes,
-    datasets: [
-      {
+// ── Render Chart 3: Consum aigua ──
+const renderChartWater = monthRows => {
+  const labels = monthRows.map(r => r[COL.set]);
+  const water  = monthRows.map(r => parseNum(r[COL.m3]));
+
+  if (chartWater) chartWater.destroy();
+  chartWater = new Chart(document.getElementById('chartWater'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
         label: 'Consum aigua [m³/setmana]',
-        data: DATA.agua_m3,
-        backgroundColor: DATA.agua_m3.map(v =>
-          v === null ? 'rgba(200,164,90,0.4)' : 'rgba(46,110,158,0.65)'
-        ),
-        borderColor: DATA.agua_m3.map(v => v === null ? C.gold : C.tide),
-        borderWidth: 1.5,
-        borderRadius: 6,
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: { boxWidth: 12, font: { size: 11 } }
-      },
-      tooltip: {
-        backgroundColor: C.ocean,
-        titleColor: '#fff',
-        bodyColor: 'rgba(255,255,255,0.8)',
-        padding: 10,
-        cornerRadius: 8,
-        callbacks: {
-          label: ctx => ctx.parsed.y === null
-            ? ' ⚠️ Reinici comptador'
-            : ` ${ctx.parsed.y} m³`
-        }
-      }
+        data: water,
+        backgroundColor: water.map(v => v === null ? 'rgba(200,164,90,0.4)' : 'rgba(46,110,158,0.65)'),
+        borderColor: water.map(v => v === null ? C.gold : C.tide),
+        borderWidth: 1.5, borderRadius: 6,
+      }]
     },
-    scales: {
-      x: { grid: { color: 'rgba(197,224,239,0.3)' }, ticks: { font: { size: 11 } } },
-      y: {
-        title: { display: true, text: 'm³/setmana', font: { size: 11 } },
-        grid: { color: 'rgba(197,224,239,0.3)' },
-        min: 0,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font:{size:11} } },
+        tooltip: {
+          backgroundColor: C.ocean, titleColor: '#fff', bodyColor: 'rgba(255,255,255,0.8)',
+          padding: 10, cornerRadius: 8,
+          callbacks: { label: ctx => ctx.parsed.y === null ? ' ⚠️ Reinici comptador' : ` ${ctx.parsed.y} m³` }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(197,224,239,0.3)' }, ticks: { font:{size:11} } },
+        y: { title: { display: true, text: 'm³/setmana', font:{size:11} },
+             grid: { color: 'rgba(197,224,239,0.3)' }, min: 0 }
       }
     }
-  }
-});
+  });
+};
 
-// ── DATA GENERACIÓ ─────────────────────────────────────────────────────────
-document.getElementById('data-generacio').textContent =
-  new Date().toLocaleDateString('ca-ES', { day:'numeric', month:'long', year:'numeric' });
+// ── Mostrar estat de càrrega ──
+const showLoading = () => {
+  document.getElementById('mes-label').textContent = 'Carregant...';
+};
+
+const showError = msg => {
+  document.getElementById('mes-label').textContent = '⚠️ Error de connexió';
+  document.getElementById('weeks-label').textContent = msg;
+};
+
+// ── MAIN: carregar CSV i renderitzar tot ──
+const loadAndRender = async () => {
+  showLoading();
+  try {
+    const resp = await fetch(SHEETS_CSV);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const text = await resp.text();
+
+    // Parsejar CSV manualment (sense dependència externa)
+    const lines = text.trim().split('\n');
+    // Fila 0=grup, 1=mitjana, 2=total, 3=capçaleres, 4+ = dades
+    const dataRows = lines.slice(4).map(line => {
+      // Gestionar comes dins cometes
+      const cols = [];
+      let cur = '', inQ = false;
+      for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else cur += ch;
+      }
+      cols.push(cur.trim());
+      return cols;
+    }).filter(r => r[0] && r[0].match(/\d{4}-S\d{2}/));
+
+    if (dataRows.length === 0) throw new Error('No hi ha dades al full');
+
+    // Detectar mes actiu (última setmana amb dades de consum lectiu)
+    const detected = detectMonth(dataRows);
+    if (!detected) throw new Error('No s'han trobat dades de consum');
+
+    const { month, year } = detected;
+    const monthRows = rowsOfMonth(dataRows, month, year);
+    const prevRows  = rowsOfPrevMonth(dataRows, month, year);
+
+    // Actualitzar header
+    document.getElementById('mes-label').textContent =
+      MESOS_FULL[month] + ' ' + year;
+    document.getElementById('weeks-label').textContent =
+      'Setmanes ' + monthRows.map(r => r[COL.set].split('-')[1]).join(' · ');
+
+    // Renderitzar tot
+    renderKPIs(monthRows, prevRows, month, year);
+    renderClimate(monthRows);
+    renderBottles(monthRows);
+    renderChartElec(monthRows);
+    renderChartComp(dataRows, year);
+    renderChartWater(monthRows);
+
+    // Data generació
+    document.getElementById('data-generacio').textContent =
+      new Date().toLocaleDateString('ca-ES', { day:'numeric', month:'long', year:'numeric' });
+
+  } catch(err) {
+    console.error('Error carregant dades:', err);
+    showError('No s'han pogut carregar les dades: ' + err.message);
+    // Data generació igualment
+    document.getElementById('data-generacio').textContent =
+      new Date().toLocaleDateString('ca-ES', { day:'numeric', month:'long', year:'numeric' });
+  }
+};
+
+loadAndRender();
 </script>
 </body>
 </html>
