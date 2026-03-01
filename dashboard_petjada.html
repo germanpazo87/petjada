@@ -439,7 +439,7 @@
     <div class="header-left">
       <div class="badge"><span class="badge-dot"></span> Informe actiu</div>
       <h1>Observatori<br>de la <em>Petjada</em></h1>
-      <p class="subtitle">Institut · Programa de Sostenibilitat Escolar · Barcelona</p>
+      <p class="subtitle">CFA Francesc Layret · Comissió Verda · Observatori de la Petjada Ecològica</p>
     </div>
     <div class="header-right">
       <div class="month-label" id="mes-label">Febrer 2026</div>
@@ -976,7 +976,7 @@ const loadAndRender = async () => {
 
     // Detectar mes actiu (última setmana amb dades de consum lectiu)
     const detected = detectMonth(dataRows);
-    if (!detected) throw new Error('No s'han trobat dades de consum');
+    if (!detected) throw new Error("No s'han trobat dades de consum");
 
     const { month, year } = detected;
     const monthRows = rowsOfMonth(dataRows, month, year);
