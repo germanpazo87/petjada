@@ -439,7 +439,7 @@
     <div class="header-left">
       <div class="badge"><span class="badge-dot"></span> Informe actiu</div>
       <h1>Observatori<br>de la <em>Petjada</em></h1>
-      <p class="subtitle">CFA Francesc Layret · Comissió Verda · Orservatori de la petjada</p>
+      <p class="subtitle">Institut · Programa de Sostenibilitat Escolar · Barcelona</p>
     </div>
     <div class="header-right">
       <div class="month-label" id="mes-label">Febrer 2026</div>
@@ -583,7 +583,8 @@
 // URL del CSV: actualitzar si canvia el Sheets
 // ══════════════════════════════════════════════════════════════════════════════
 
-const SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReqrjc4UJK_kIfUTyDjZYhgN2gEylzPEsdPncLJQlHiZkJFWXXskBQE4SwR022Sg/pub?gid=989066220&single=true&output=csv';
+const SHEETS_CSV_RAW = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTV1-0MALvHb_77ghThzLeLrCtXhek1Al05HOp13rNSgmY_Bb02tiWG50KeityvUQ/pub?gid=989066220&single=true&output=csv';
+const SHEETS_CSV = 'https://api.allorigins.win/get?url=' + encodeURIComponent(SHEETS_CSV_RAW);
 const T_REF = 18.8;
 
 // ── Índexos de columna del CSV (0-based, fila 4 = capçaleres) ──
@@ -927,7 +928,9 @@ const loadAndRender = async () => {
   try {
     const resp = await fetch(SHEETS_CSV);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const text = await resp.text();
+    const json = await resp.json();
+    if (!json.contents) throw new Error('El proxy no ha retornat dades');
+    const text = json.contents;
 
     // Parsejar CSV manualment (sense dependència externa)
     const lines = text.trim().split('\n');
