@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observatori de la Petjada — Informe Mensual</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --forest:    #1a3a2a;
+    --moss:      #2d5a3d;
+    --fern:      #4a8c5c;
+    --sage:      #7ab893;
+    --mist:      #b8d8c4;
+    --foam:      #e8f4ed;
+    --ocean:     #1e4a6b;
+    --tide:      #2e6e9e;
+    --sky:       #5b9fc2;
+    --pale-sky:  #c5e0ef;
+    --sand:      #f5f0e8;
+    --stone:     #8a9a8e;
+    --ink:       #1c2b22;
+    --cream:     #fafaf7;
+    --gold:      #c8a45a;
+    --warmgray:  #e8e4dc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(74,140,92,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 90% 80%, rgba(30,74,107,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(184,216,196,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  /* ── HEADER ── */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1.5px solid var(--mist);
+    margin-bottom: 48px;
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 8px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--forest);
+    color: var(--mist);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    width: fit-content;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--sage);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.4; transform:scale(0.7); }
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    color: var(--forest);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--fern);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--stone);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  .header-right {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .month-label {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--forest);
+  }
+  .year-label {
+    font-size: 12px;
+    color: var(--stone);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .weeks-label {
+    font-size: 11px;
+    color: var(--sage);
+    margin-top: 4px;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+
+  .kpi {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(26,58,42,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+  }
+  .kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(26,58,42,0.12);
+  }
+
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: 16px 16px 0 0;
+  }
+  .kpi.energy::before  { background: linear-gradient(90deg, var(--gold), #e8c878); }
+  .kpi.index::before   { background: linear-gradient(90deg, var(--fern), var(--sage)); }
+  .kpi.bottles::before { background: linear-gradient(90deg, var(--tide), var(--sky)); }
+
+  .kpi-icon {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    display: block;
+    line-height: 1;
+  }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--forest);
+  }
+  .kpi-unit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--stone);
+    margin-left: 4px;
+  }
+  .kpi-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .kpi-delta.good  { background: rgba(74,140,92,0.12); color: var(--fern); }
+  .kpi-delta.warn  { background: rgba(200,164,90,0.15); color: #a07830; }
+  .kpi-delta.info  { background: rgba(46,110,158,0.12); color: var(--tide); }
+
+  .kpi-subtext {
+    font-size: 11px;
+    color: var(--stone);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--mist);
+  }
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--stone);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  /* ── CHARTS GRID ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .chart-full { grid-column: 1 / -1; }
+
+  .chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 20px rgba(26,58,42,0.06);
+  }
+  .chart-card canvas { max-height: 240px; }
+
+  /* ── WATER SECTION ── */
+  .water-section {
+    margin-bottom: 48px;
+  }
+  .water-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ── BOTTLES VISUAL ── */
+  .bottles-card {
+    background: linear-gradient(135deg, var(--ocean) 0%, var(--tide) 100%);
+    border-radius: 16px;
+    padding: 28px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .bottles-card::after {
+    content: '💧';
+    position: absolute;
+    font-size: 8rem;
+    opacity: 0.08;
+    bottom: -20px;
+    right: -10px;
+    line-height: 1;
+  }
+  .bottles-title {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 16px;
+  }
+  .bottles-big {
+    font-family: 'Fraunces', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .bottles-breakdown {
+    font-size: 12px;
+    opacity: 0.75;
+    margin-top: 12px;
+    line-height: 1.8;
+  }
+  .bottles-co2 {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 13px;
+  }
+  .bottles-co2 strong {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  /* ── EFFICIENCY CONTEXT ── */
+  .context-card {
+    background: var(--foam);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1.5px solid var(--mist);
+  }
+  .context-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--mist);
+    font-size: 13px;
+  }
+  .context-row:last-child { border-bottom: none; }
+  .context-key { color: var(--stone); font-weight: 400; }
+  .context-val {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--forest);
+    font-size: 1rem;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap { margin-top: 16px; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--stone);
+    margin-bottom: 6px;
+  }
+  .progress-bar {
+    height: 8px;
+    background: var(--mist);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .fill-energy { background: linear-gradient(90deg, var(--fern), var(--sage)); }
+  .fill-water  { background: linear-gradient(90deg, var(--tide), var(--sky)); }
+
+  /* ── REGIME BADGE ── */
+  .regime-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .regime-winter { background: rgba(26,58,42,0.1); color: var(--forest); }
+  .regime-summer { background: rgba(200,164,90,0.15); color: #8a6020; }
+  .regime-trans  { background: rgba(138,154,142,0.15); color: var(--stone); }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--mist);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--stone);
+  }
+  .footer-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fern);
+  }
+
+  /* ── METHODOLOGY NOTE ── */
+  .method-note {
+    background: var(--warmgray);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 11px;
+    color: var(--stone);
+    line-height: 1.7;
+    margin-top: 20px;
+  }
+  .method-note strong { color: var(--forest); }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+  @keyframes fadeUp {
+    to { opacity:1; transform:translateY(0); }
+  }
+  .kpi:nth-child(1) { animation-delay: 0.1s; }
+  .kpi:nth-child(2) { animation-delay: 0.2s; }
+  .kpi:nth-child(3) { animation-delay: 0.3s; }
+
+  @media (max-width: 700px) {
+    .kpis { grid-template-columns: 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .water-grid { grid-template-columns: 1fr; }
+    header { grid-template-columns: 1fr; }
+    .header-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="badge"><span class="badge-dot"></span> Informe actiu</div>
+      <h1>Observatori<br>de la <em>Petjada</em></h1>
+      <p class="subtitle">Institut · Programa de Sostenibilitat Escolar · Barcelona</p>
+    </div>
+    <div class="header-right">
+      <div class="month-label" id="mes-label">Febrer 2026</div>
+      <div class="year-label">Curs 2025–26</div>
+      <div class="weeks-label">Setmanes S06 · S07 · S08 · S09</div>
+    </div>
+  </header>
+
+  <!-- KPI CARDS -->
+  <div class="kpis">
+    <div class="kpi energy fade-up">
+      <span class="kpi-icon">⚡</span>
+      <div class="kpi-label">Consum elèctric del mes</div>
+      <div>
+        <span class="kpi-value">3.979</span>
+        <span class="kpi-unit">kWh</span>
+      </div>
+      <div class="kpi-delta warn">▲ +2,1% vs gener</div>
+      <div class="kpi-subtext">18 dies lectius · 4 setmanes</div>
+    </div>
+
+    <div class="kpi index fade-up">
+      <span class="kpi-icon">📊</span>
+      <div class="kpi-label">Índex d'eficiència</div>
+      <div>
+        <span class="kpi-value">65,3</span>
+        <span class="kpi-unit">kWh/K·dia</span>
+      </div>
+      <div class="kpi-delta good">▼ −8,4% vs gener</div>
+      <div style="margin-top:8px;">
+        <span class="regime-tag regime-winter">❄️ Règim hivern</span>
+      </div>
+    </div>
+
+    <div class="kpi bottles fade-up">
+      <span class="kpi-icon">🍶</span>
+      <div class="kpi-label">Ampolles evitades</div>
+      <div>
+        <span class="kpi-value">—</span>
+        <span class="kpi-unit">u/mes</span>
+      </div>
+      <div class="kpi-delta info">⏳ Font instal·lada S10</div>
+      <div class="kpi-subtext">Disponible a partir de març 2026</div>
+    </div>
+  </div>
+
+  <!-- GRÀFIC 1: Evolució setmanal consum elèctric -->
+  <div class="section-title">⚡ Evolució del consum elèctric setmanal</div>
+  <p class="section-subtitle">Consum per dia lectiu [kWh/dia] i índex d'eficiència corregit per temperatura</p>
+  <div class="chart-card chart-full" style="margin-bottom:48px;">
+    <canvas id="chartElec"></canvas>
+  </div>
+
+  <!-- GRÀFIC 2: Comparativa mes actual vs any anterior -->
+  <div class="section-title">📅 Comparativa mensual</div>
+  <p class="section-subtitle">Consum lectiu mitjà [kWh/dia] per mes · 2025 vs 2026</p>
+  <div class="charts-grid" style="margin-bottom:48px;">
+    <div class="chart-card">
+      <canvas id="chartComp"></canvas>
+    </div>
+    <div class="context-card">
+      <div class="section-title" style="font-size:0.95rem; margin-bottom:16px;">Context climàtic del mes</div>
+      <div class="context-row">
+        <span class="context-key">T mitjana</span>
+        <span class="context-val">13,3 °C</span>
+      </div>
+      <div class="context-row">
+        <span class="context-key">T efectiva (amb sol)</span>
+        <span class="context-val">14,5 °C</span>
+      </div>
+      <div class="context-row">
+        <span class="context-key">Radiació solar</span>
+        <span class="context-val">80,2 MJ/m²</span>
+      </div>
+      <div class="context-row">
+        <span class="context-key">T bonus solar</span>
+        <span class="context-val">+1,15 °C</span>
+      </div>
+      <div class="context-row">
+        <span class="context-key">Graus-dia calef.</span>
+        <span class="context-val">4,3 K·dia</span>
+      </div>
+      <div class="progress-wrap" style="margin-top:16px;">
+        <div class="progress-label">
+          <span>Fredesc</span><span>Temperat</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill fill-energy" style="width: 62%"></div>
+        </div>
+      </div>
+      <div class="method-note">
+        <strong>Com s'interpreta l'índex?</strong> Dividim el consum per dia lectiu entre els graus de diferència respecte 18,8°C. Valors <em>més baixos</em> indiquen major eficiència, independentment de la temperatura exterior.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓ AIGUA I AMPOLLES -->
+  <div class="section-title">💧 Consum d'aigua i impacte ampolles</div>
+  <p class="section-subtitle">Consum setmanal d'aigua de xarxa i estimació d'ampolles evitades (disponible des de S10)</p>
+  <div class="water-section">
+    <div class="water-grid">
+      <div class="chart-card">
+        <canvas id="chartWater"></canvas>
+      </div>
+      <div class="bottles-card">
+        <div class="bottles-title">🍶 Ampolles evitades acumulades</div>
+        <div class="bottles-big">—</div>
+        <div style="font-size:13px; opacity:0.8;">Font instal·lada: 2 mar 2026</div>
+        <div class="bottles-breakdown">
+          Ampolles de font pública (0,5 L): <strong>—</strong><br>
+          Garrafes Aquaservice × 36: <strong>—</strong><br>
+          <em>Dades disponibles a partir de S10</em>
+        </div>
+        <div class="bottles-co2">
+          CO₂ evitat estimat:<br>
+          <strong>— kg</strong>
+          <span style="font-size:11px; opacity:0.7; margin-left:6px;">× 0,17 kg CO₂/ampolla</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="method-note" style="margin-top:16px;">
+      <strong>Nota metodològica:</strong> El consum base d'aigua (pre-font) és la mitjana de les setmanes S03–S07: <strong>1,09 m³/dia lectiu</strong>. Qualsevol increment sobre aquest valor s'atribueix a l'ús de la font pública. Les garrafes Aquaservice s'introdueixen manualment des de les factures del servei. El factor de CO₂ per ampolla de 0,5L és <strong>0,17 kg CO₂eq</strong> (fabricació PET + distribució + residus, literatura científica).
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">🌿 Observatori de la Petjada</div>
+    <div>
+      Generat: <span id="data-generacio"></span> ·
+      Factors: Agència Energia BCN · OCCC 2024–25 · XEMA Meteocat
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ── DATA (substituir amb dades reals cada mes) ──────────────────────────────
+const DATA = {
+  mes: "Febrer 2026",
+  setmanes: ["S06", "S07", "S08", "S09"],
+  consum_lectiu: [261.2, 235.75, 218.25, 171.4],   // kWh/dia lectiu
+  index_ef:      [49.90, 71.56, 65.09, 37.53],      // kWh/K·dia
+  t_efectiva:    [13.57, 15.51, 15.45, 14.23],       // °C
+  agua_m3:       [6, 5, null, 6],                    // null = reinici comptador
+
+  // Comparativa mensual: [gen, feb, mar, abr, mai, jun]
+  comp_2025: [268, 241, 198, 154, 132, 118],
+  comp_2026: [247, 221, null, null, null, null],
+  mesos:     ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun"],
+};
+
+// ── COLOR PALETTE ──────────────────────────────────────────────────────────
+const C = {
+  forest:  '#1a3a2a',
+  fern:    '#4a8c5c',
+  sage:    '#7ab893',
+  mist:    '#b8d8c4',
+  foam:    '#e8f4ed',
+  ocean:   '#1e4a6b',
+  tide:    '#2e6e9e',
+  sky:     '#5b9fc2',
+  palesky: '#c5e0ef',
+  gold:    '#c8a45a',
+  warmgold:'#e8c878',
+};
+
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#8a9a8e';
+
+// ── CHART 1: Evolució setmanal consum elèctric + índex ─────────────────────
+new Chart(document.getElementById('chartElec'), {
+  type: 'bar',
+  data: {
+    labels: DATA.setmanes,
+    datasets: [
+      {
+        label: 'Consum lectiu [kWh/dia]',
+        data: DATA.consum_lectiu,
+        backgroundColor: DATA.consum_lectiu.map(v => `rgba(74,140,92,${0.5 + (v/400)*0.4})`),
+        borderColor: C.fern,
+        borderWidth: 1.5,
+        borderRadius: 6,
+        yAxisID: 'y',
+        order: 2,
+      },
+      {
+        label: 'Índex eficiència [kWh/K·dia]',
+        data: DATA.index_ef,
+        type: 'line',
+        borderColor: C.gold,
+        backgroundColor: 'rgba(200,164,90,0.08)',
+        borderWidth: 2.5,
+        pointBackgroundColor: C.gold,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.3,
+        fill: true,
+        yAxisID: 'y2',
+        order: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 14, padding: 20, font: { size: 12 } }
+      },
+      tooltip: {
+        backgroundColor: C.forest,
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.8)',
+        padding: 12,
+        cornerRadius: 8,
+        callbacks: {
+          label: ctx => {
+            if (ctx.datasetIndex === 0) return ` ${ctx.parsed.y.toFixed(1)} kWh/dia`;
+            return ` Índex: ${ctx.parsed.y.toFixed(2)} kWh/K·dia`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(184,216,196,0.3)' }, ticks: { font: { size: 12 } } },
+      y: {
+        position: 'left',
+        title: { display: true, text: 'kWh/dia lectiu', font: { size: 11 } },
+        grid: { color: 'rgba(184,216,196,0.3)' },
+        min: 0,
+      },
+      y2: {
+        position: 'right',
+        title: { display: true, text: 'Índex [kWh/K·dia]', font: { size: 11 } },
+        grid: { drawOnChartArea: false },
+        min: 0,
+      }
+    }
+  }
+});
+
+// ── CHART 2: Comparativa mensual 2025 vs 2026 ──────────────────────────────
+new Chart(document.getElementById('chartComp'), {
+  type: 'bar',
+  data: {
+    labels: DATA.mesos,
+    datasets: [
+      {
+        label: '2025',
+        data: DATA.comp_2025,
+        backgroundColor: 'rgba(184,216,196,0.5)',
+        borderColor: C.sage,
+        borderWidth: 1.5,
+        borderRadius: 4,
+      },
+      {
+        label: '2026',
+        data: DATA.comp_2026,
+        backgroundColor: DATA.comp_2026.map(v => v ? 'rgba(74,140,92,0.75)' : 'transparent'),
+        borderColor: C.fern,
+        borderWidth: 1.5,
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 12, padding: 16, font: { size: 11 } }
+      },
+      tooltip: {
+        backgroundColor: C.forest,
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.8)',
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          label: ctx => ctx.parsed.y ? ` ${ctx.parsed.y} kWh/dia` : ' Sense dades',
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(184,216,196,0.3)' }, ticks: { font: { size: 11 } } },
+      y: {
+        title: { display: true, text: 'kWh/dia lectiu', font: { size: 11 } },
+        grid: { color: 'rgba(184,216,196,0.3)' },
+        min: 0,
+      }
+    }
+  }
+});
+
+// ── CHART 3: Consum setmanal d'aigua ──────────────────────────────────────
+new Chart(document.getElementById('chartWater'), {
+  type: 'bar',
+  data: {
+    labels: DATA.setmanes,
+    datasets: [
+      {
+        label: 'Consum aigua [m³/setmana]',
+        data: DATA.agua_m3,
+        backgroundColor: DATA.agua_m3.map(v =>
+          v === null ? 'rgba(200,164,90,0.4)' : 'rgba(46,110,158,0.65)'
+        ),
+        borderColor: DATA.agua_m3.map(v => v === null ? C.gold : C.tide),
+        borderWidth: 1.5,
+        borderRadius: 6,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 12, font: { size: 11 } }
+      },
+      tooltip: {
+        backgroundColor: C.ocean,
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.8)',
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          label: ctx => ctx.parsed.y === null
+            ? ' ⚠️ Reinici comptador'
+            : ` ${ctx.parsed.y} m³`
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(197,224,239,0.3)' }, ticks: { font: { size: 11 } } },
+      y: {
+        title: { display: true, text: 'm³/setmana', font: { size: 11 } },
+        grid: { color: 'rgba(197,224,239,0.3)' },
+        min: 0,
+      }
+    }
+  }
+});
+
+// ── DATA GENERACIÓ ─────────────────────────────────────────────────────────
+document.getElementById('data-generacio').textContent =
+  new Date().toLocaleDateString('ca-ES', { day:'numeric', month:'long', year:'numeric' });
+</script>
+</body>
+</html>
